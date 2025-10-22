@@ -36,6 +36,8 @@ func NewAuthSetter(cfg v1.AuthClientConfig) (authProvider Setter, err error) {
 		if err != nil {
 			return nil, err
 		}
+	case v1.AuthMethodJWT:
+		authProvider = NewJWTAuthSetter(cfg.AdditionalScopes, cfg.JWT.Token)
 	default:
 		return nil, fmt.Errorf("unsupported auth method: %s", cfg.Method)
 	}
@@ -55,6 +57,8 @@ func NewAuthVerifier(cfg v1.AuthServerConfig) (authVerifier Verifier) {
 	case v1.AuthMethodOIDC:
 		tokenVerifier := NewTokenVerifier(cfg.OIDC)
 		authVerifier = NewOidcAuthVerifier(cfg.AdditionalScopes, tokenVerifier)
+	case v1.AuthMethodJWT:
+		authVerifier = NewJWTAuthVerifier(cfg.AdditionalScopes, cfg.JWT.PublicKeySource)
 	}
 	return authVerifier
 }
