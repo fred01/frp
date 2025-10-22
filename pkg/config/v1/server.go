@@ -134,6 +134,7 @@ type AuthServerConfig struct {
 	Token            string               `json:"token,omitempty"`
 	TokenSource      *ValueSource         `json:"tokenSource,omitempty"`
 	OIDC             AuthOIDCServerConfig `json:"oidc,omitempty"`
+	JWT              AuthJWTServerConfig  `json:"jwt,omitempty"`
 }
 
 func (c *AuthServerConfig) Complete() error {
@@ -166,6 +167,12 @@ type AuthOIDCServerConfig struct {
 	// SkipIssuerCheck specifies whether to skip checking if the OIDC token's
 	// issuer claim matches the issuer specified in OidcIssuer.
 	SkipIssuerCheck bool `json:"skipIssuerCheck,omitempty"`
+}
+
+type AuthJWTServerConfig struct {
+	// PublicKeySource specifies the source type for the public key.
+	// Supports: "file:/path/to/key", "url:https://...", "jwt-field:issuer"
+	PublicKeySource string `json:"publicKeySource,omitempty"`
 }
 
 type ServerTransportConfig struct {

@@ -181,7 +181,8 @@ type AuthClientConfig struct {
 	// Method specifies what authentication method to use to
 	// authenticate frpc with frps. If "token" is specified - token will be
 	// read into login message. If "oidc" is specified - OIDC (Open ID Connect)
-	// token will be issued using OIDC settings. By default, this value is "token".
+	// token will be issued using OIDC settings. If "jwt" is specified - JWT
+	// token will be used for authentication. By default, this value is "token".
 	Method AuthMethod `json:"method,omitempty"`
 	// Specify whether to include auth info in additional scope.
 	// Current supported scopes are: "HeartBeats", "NewWorkConns".
@@ -194,6 +195,7 @@ type AuthClientConfig struct {
 	// This is mutually exclusive with Token field.
 	TokenSource *ValueSource         `json:"tokenSource,omitempty"`
 	OIDC        AuthOIDCClientConfig `json:"oidc,omitempty"`
+	JWT         AuthJWTClientConfig  `json:"jwt,omitempty"`
 }
 
 func (c *AuthClientConfig) Complete() error {
@@ -208,6 +210,17 @@ func (c *AuthClientConfig) Complete() error {
 		// Move the resolved token to the Token field and clear TokenSource
 		c.Token = token
 		c.TokenSource = nil
+	}
+
+	// Resolve JWT tokenSource during configuration loading
+	if c.Method == AuthMethodJWT && c.JWT.TokenSource != nil {
+		token, err := c.JWT.TokenSource.Resolve(context.Background())
+		if err != nil {
+			return fmt.Errorf("failed to resolve auth.jwt.tokenSource: %w", err)
+		}
+		// Move the resolved token to the Token field and clear TokenSource
+		c.JWT.Token = token
+		c.JWT.TokenSource = nil
 	}
 	return nil
 }
@@ -239,6 +252,13 @@ type AuthOIDCClientConfig struct {
 	// Supports http, https, socks5, and socks5h proxy protocols.
 	// If empty, no proxy is used for OIDC connections.
 	ProxyURL string `json:"proxyURL,omitempty"`
+}
+
+type AuthJWTClientConfig struct {
+	// Token specifies the JWT token to use for authentication.
+	Token string `json:"token,omitempty"`
+	// TokenSource specifies a dynamic source for the JWT token.
+	TokenSource *ValueSource `json:"tokenSource,omitempty"`
 }
 
 type VirtualNetConfig struct {

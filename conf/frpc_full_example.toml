@@ -69,6 +69,15 @@ auth.token = "12345678"
 # If not specified, no proxy is used for OIDC connections.
 # auth.oidc.proxyURL = "http://proxy.example.com:8080"
 
+# JWT authentication
+# jwt.token specifies the JWT token to use for authentication.
+# auth.jwt.token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+# alternatively, you can use tokenSource to load the JWT token from a file
+# this is mutually exclusive with auth.jwt.token
+# auth.jwt.tokenSource.type = "file"
+# auth.jwt.tokenSource.file.path = "/etc/frp/jwt_token.jwt"
+
 # Set admin address for control frpc's action by http api such as reload
 webServer.addr = "127.0.0.1"
 webServer.port = 7400

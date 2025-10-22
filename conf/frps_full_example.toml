@@ -95,7 +95,8 @@ detailedErrorsToClient = true
 
 # auth.method specifies what authentication method to use authenticate frpc with frps.
 # If "token" is specified - token will be read into login message.
-# If "oidc" is specified - OIDC (Open ID Connect) token will be issued using OIDC settings. By default, this value is "token".
+# If "oidc" is specified - OIDC (Open ID Connect) token will be issued using OIDC settings.
+# If "jwt" is specified - JWT (JSON Web Token) will be used for authentication. By default, this value is "token".
 auth.method = "token"
 
 # auth.additionalScopes specifies additional scopes to include authentication information.
@@ -118,6 +119,13 @@ auth.oidc.audience = ""
 auth.oidc.skipExpiryCheck = false
 # oidc skipIssuerCheck specifies whether to skip checking if the OIDC token's issuer claim matches the issuer specified in OidcIssuer.
 auth.oidc.skipIssuerCheck = false
+
+# jwt publicKeySource specifies the source of the public key for JWT verification.
+# Supported formats:
+#   - "file:/path/to/public.pem" - Load public key from a PEM file
+#   - "url:https://example.com/.well-known/jwks.json" - Load from JWKS URL
+#   - "jwt-field:issuer" - Extract JWKS URL from JWT issuer field
+# auth.jwt.publicKeySource = "file:/etc/frp/jwt_public_key.pem"
 
 # userConnTimeout specifies the maximum time to wait for a work connection.
 # userConnTimeout = 10
